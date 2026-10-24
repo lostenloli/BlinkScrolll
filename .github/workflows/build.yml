@@ -20,6 +20,10 @@ jobs:
         run: |
           unzip -oq *.zip
           cd "$(dirname "$(find . -name settings.gradle.kts -not -path './.git/*' | head -1)")"
+          if grep -q 'java.net.URL(url)' app/build.gradle.kts; then
+            sed -i 's/java\.net\.URL(url)/URL(url)/' app/build.gradle.kts
+            sed -i '1i import java.net.URL' app/build.gradle.kts
+          fi
           gradle :app:assembleDebug --no-daemon
           cp app/build/outputs/apk/debug/app-debug.apk $GITHUB_WORKSPACE/BlinkScroll.apk
       - uses: softprops/action-gh-release@v2
